@@ -1,6 +1,6 @@
 import React from "react";
 
-const Hero = () => {
+const Hero = ({ onExploreCareer }) => {
   return (
     <div className="h-screen relative overflow-hidden">
       {/* Moving background image */}
@@ -25,9 +25,20 @@ const Hero = () => {
             Make smarter decisions by detecting and overcoming hidden cognitive
             biases in real-time.
           </p>
-          <button className="px-8 py-4 bg-purple-600 hover:bg-purple-800 rounded-full text-lg shadow-lg transition duration-300">
-            🚀 Get Started
-          </button>
+          <div className="space-x-4 relative z-20">
+            <button className="px-8 py-4 bg-purple-600 hover:bg-purple-800 rounded-full text-lg shadow-lg transition duration-300">
+              🚀 Get Started
+            </button>
+            <button 
+              onClick={() => {
+                alert('Button clicked!');
+                onExploreCareer();
+              }}
+              className="px-8 py-4 bg-blue-600 hover:bg-blue-800 rounded-full text-lg shadow-lg transition duration-300"
+            >
+              🎯 Explore Career
+            </button>
+          </div>
         </div>
       </div>
 
