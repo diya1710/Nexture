@@ -1,5 +1,6 @@
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { useEffect, useState } from "react";
 
 function HomePage() {
   return (
@@ -45,14 +46,8 @@ function HomePage() {
               <span className="text-yellow-300"> perfect career</span> and build your professional future.
             </p>
             
-            {/* Enhanced Buttons */}
-            <div className="flex flex-col sm:flex-row gap-8 justify-center items-center mb-24">
-              <button className="group px-12 py-6 bg-gradient-to-r from-white to-gray-100 text-green-700 font-bold rounded-full text-2xl hover:scale-110 transition-all duration-300 shadow-2xl glow-purple">
-                <span className="flex items-center gap-3">
-                  🚀 Start Assessment
-                  <span className="group-hover:translate-x-1 transition-transform">→</span>
-                </span>
-              </button>
+            {/* Primary CTA */}
+            <div className="flex justify-center items-center mt-4 mb-24">
               <button className="group px-12 py-6 border-2 border-white text-white font-bold rounded-full text-2xl hover:bg-white hover:text-green-700 transition-all duration-300 shadow-2xl glow-blue">
                 <span className="flex items-center gap-3">
                   📚 Explore Careers
@@ -61,31 +56,141 @@ function HomePage() {
               </button>
             </div>
             
-            {/* Feature Highlights */}
-            <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-16 max-w-6xl mx-auto">
-              <div className="bg-white/10 backdrop-blur-enhanced rounded-2xl p-8 border border-white/20 card-hover">
-                <div className="text-5xl mb-6 floating">🎯</div>
-                <h3 className="text-2xl font-semibold mb-4 text-yellow-300">Career Assessment</h3>
-                <p className="text-base opacity-80 leading-relaxed">Comprehensive personality and skills assessment to match you with ideal careers</p>
-              </div>
-              <div className="bg-white/10 backdrop-blur-enhanced rounded-2xl p-8 border border-white/20 card-hover">
-                <div className="text-5xl mb-6 floating" style={{animationDelay: '1s'}}>💼</div>
-                <h3 className="text-2xl font-semibold mb-4 text-cyan-300">Job Matching</h3>
-                <p className="text-base opacity-80 leading-relaxed">AI-powered job recommendations based on your skills, interests, and goals</p>
-              </div>
-              <div className="bg-white/10 backdrop-blur-enhanced rounded-2xl p-8 border border-white/20 card-hover">
-                <div className="text-5xl mb-6 floating" style={{animationDelay: '2s'}}>📈</div>
-                <h3 className="text-2xl font-semibold mb-4 text-green-300">Career Growth</h3>
-                <p className="text-base opacity-80 leading-relaxed">Track your professional development and plan your career advancement</p>
-              </div>
-            </div>
+            {/* Sliding Carousel */}
+            <Carousel />
           </div>
         </div>
       </div>
       
 
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }
 
 export default HomePage;
+
+function Carousel() {
+  const slides = [
+    {
+      src: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1600&q=80&auto=format&fit=crop",
+      alt: "Career assessment image",
+      caption: "Discover career paths tailored to you",
+      label: "Career Assessment",
+      anchor: "#assessments",
+    },
+    {
+      src: "https://images.unsplash.com/photo-1552581234-26160f608093?w=1600&q=80&auto=format&fit=crop",
+      alt: "Job matching image",
+      caption: "Match with roles using AI insights",
+      label: "Job Matching",
+      anchor: "#careers",
+    },
+    {
+      src: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1600&q=80&auto=format&fit=crop",
+      alt: "Career growth collaboration image",
+      caption: "Grow skills for your next promotion",
+      label: "Career Growth",
+      anchor: "#resources",
+    },
+  ];
+
+  const [index, setIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  useEffect(() => {
+    if (isPaused) return;
+    const id = setInterval(() => {
+      setIndex((i) => (i + 1) % slides.length);
+    }, 3500);
+    return () => clearInterval(id);
+  }, [isPaused, slides.length]);
+
+  useEffect(() => {
+    function handleKey(e) {
+      if (e.key === 'ArrowLeft') {
+        setIndex((i) => (i - 1 + slides.length) % slides.length);
+      } else if (e.key === 'ArrowRight') {
+        setIndex((i) => (i + 1) % slides.length);
+      }
+    }
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [slides.length]);
+
+  return (
+    <div
+      className="relative max-w-7xl mx-auto mt-20 px-4 md:px-6"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
+      <div className="overflow-hidden rounded-2xl border border-white/20 shadow-xl">
+        {/* Sliding track */}
+        <div className="relative w-full h-[50vh] md:h-[60vh] min-h-[320px] md:min-h-[480px] group">
+          <div
+            className="flex h-full transition-transform duration-700 ease-out"
+            style={{ transform: `translateX(-${index * 100}%)` }}
+          >
+            {slides.map((slide) => (
+              <div key={slide.label} className="min-w-full h-full relative">
+                <img
+                  src={slide.src}
+                  alt={slide.alt}
+                  className="w-full h-full object-cover block bg-gray-200"
+                  loading="lazy"
+                  decoding="async"
+                  referrerPolicy="no-referrer"
+                />
+                <div className="absolute inset-0 bg-black/30"></div>
+              </div>
+            ))}
+          </div>
+
+          {/* Prev/Next Arrows */}
+          <button
+            type="button"
+            aria-label="Previous slide"
+            onClick={() => setIndex((i) => (i - 1 + slides.length) % slides.length)}
+            className="z-20 absolute left-3 md:left-4 top-4 md:top-6 p-3 md:p-4 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors shadow-lg"
+          >
+            ‹
+          </button>
+          <button
+            type="button"
+            aria-label="Next slide"
+            onClick={() => setIndex((i) => (i + 1) % slides.length)}
+            className="z-20 absolute left-3 md:left-4 top-14 md:top-20 p-3 md:p-4 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors shadow-lg"
+          >
+            ›
+          </button>
+
+          {/* Overlay content on each slide */}
+          <div className="pointer-events-none absolute bottom-0 left-0 right-0 p-4 md:p-6">
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-3">
+              <div className="pointer-events-auto bg-black/45 text-white text-sm md:text-base rounded-lg inline-block px-3 py-2 max-w-xl">
+                {slides[index].caption}
+              </div>
+              <div className="pointer-events-auto flex flex-wrap gap-2">
+                {slides.map((slide, i) => (
+                  <button
+                    key={slide.label}
+                    onClick={() => setIndex(i)}
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors border ${
+                      i === index
+                        ? "bg-emerald-500 text-white border-emerald-500"
+                        : "bg-white/90 text-emerald-700 border-emerald-200 hover:bg-white"
+                    }`}
+                    aria-label={`Show ${slide.label}`}
+                  >
+                    {slide.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
